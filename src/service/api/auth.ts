@@ -18,6 +18,15 @@ export function fetchLogin(username: string, password: string) {
   return request.post<ApiAuth.Token>('/login', { username, password });
 }
 
+/**
+ * 获取登录信息
+ * @param username
+ * @param password - 密码
+ */
+export function fetchRegister(username: string, password: string) {
+  return request.post<void>('/registration', { username, password });
+}
+
 /** 获取用户信息 */
 export function fetchUserInfo() {
   return request.get<ApiAuth.UserInfo>('/getUserInfo');

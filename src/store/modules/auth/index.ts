@@ -1,7 +1,7 @@
 import { unref, nextTick } from 'vue';
 import { defineStore } from 'pinia';
 import { router } from '@/router';
-import { fetchLogin, fetchUserInfo } from '@/service';
+import { fetchLogin, fetchUserInfo, fetchRegister } from '@/service';
 import { useRouterPush } from '@/composables';
 import { localStg } from '@/utils';
 import { useTabStore } from '../tab';
@@ -15,13 +15,16 @@ interface AuthState {
   token: string;
   /** 登录的加载状态 */
   loginLoading: boolean;
+  /** 注册的加载状态 */
+  registerLoading: boolean;
 }
 
 export const useAuthStore = defineStore('auth-store', {
   state: (): AuthState => ({
     userInfo: getUserInfo(),
     token: getToken(),
-    loginLoading: false
+    loginLoading: false,
+    registerLoading: false
   }),
   getters: {
     /** 是否登录 */
@@ -49,6 +52,15 @@ export const useAuthStore = defineStore('auth-store', {
         resetRouteStore();
       });
     },
+    /**
+     * 处理注册后成功或失败的逻辑
+     */
+    async handleActionAfterRegister() {
+      const { toLoginRedirect } = useRouterPush(false);
+			window.$message?.success('注册成功!');
+      toLoginRedirect();
+    },
+
     /**
      * 处理登录后成功或失败的逻辑
      * @param backendToken - 返回的token
@@ -118,6 +130,17 @@ export const useAuthStore = defineStore('auth-store', {
         await this.handleActionAfterLogin(data);
       }
       this.loginLoading = false;
+    },
+    /**
+     * 注册
+     * @param userName - 用户名
+     * @param password - 密码
+     */
+    async register(userName: string, password: string) {
+      this.registerLoading = true;
+      await fetchRegister(userName, password);
+      await this.handleActionAfterRegister();
+      this.registerLoading = false;
     },
     /**
      * 更换用户权限(切换账号)

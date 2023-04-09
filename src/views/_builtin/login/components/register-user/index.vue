@@ -10,7 +10,15 @@
       <n-input v-model:value="model.confirmPwd" type="password" show-password-on="click" placeholder="确认密码" />
     </n-form-item>
     <n-space :vertical="true" :size="18">
-      <n-button type="primary" size="large" :block="true" :round="true" @click="handleSubmit">确定</n-button>
+      <n-button
+        type="primary"
+        size="large"
+        :block="true"
+        :round="true"
+        :loading="auth.registerLoading"
+        @click="handleSubmit"
+        >确定</n-button
+      >
       <n-button size="large" :block="true" :round="true" @click="toLoginModule('pwd-login')">返回</n-button>
     </n-space>
   </n-form>
@@ -19,10 +27,13 @@
 <script lang="ts" setup>
 import { reactive, ref, toRefs } from 'vue';
 import type { FormInst, FormRules } from 'naive-ui';
+import { useAuthStore } from '@/store';
 import { useRouterPush } from '@/composables';
 import { useSmsCode } from '@/hooks';
 import { formRules, getConfirmPwdRule } from '@/utils';
 
+const auth = useAuthStore();
+const { register } = useAuthStore();
 const { toLoginModule } = useRouterPush();
 const { label, isCounting, loading: smsLoading, start } = useSmsCode();
 
@@ -50,7 +61,8 @@ function handleSmsCode() {
 
 async function handleSubmit() {
   await formRef.value?.validate();
-  window.$message?.success('验证成功!');
+  const { username, pwd } = model;
+  register(username, pwd);
 }
 </script>
 
