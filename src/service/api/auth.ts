@@ -20,7 +20,7 @@ export function fetchLogin(username: string, password: string) {
 
 /** 获取用户信息 */
 export function fetchUserInfo() {
-  return mockRequest.get<ApiAuth.UserInfo>('/getUserInfo');
+  return request.get<ApiAuth.UserInfo>('/getUserInfo');
 }
 
 /**

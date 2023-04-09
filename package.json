@@ -35,7 +35,7 @@
     "UnoCSS"
   ],
   "scripts": {
-    "dev": "cross-env VITE_SERVICE_ENV=dev vite",
+    "dev": "cross-env VITE_SERVICE_ENV=dev vite ",
     "dev:test": "cross-env VITE_SERVICE_ENV=test vite",
     "dev:prod": "cross-env VITE_SERVICE_ENV=prod vite",
     "build": "npm run typecheck && cross-env VITE_SERVICE_ENV=prod vite build",

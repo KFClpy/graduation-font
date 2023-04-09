@@ -58,7 +58,6 @@ export const useAuthStore = defineStore('auth-store', {
       const { toLoginRedirect } = useRouterPush(false);
 
       const loginSuccess = await this.loginByToken(backendToken);
-
       if (loginSuccess) {
         await route.initAuthRoute();
 
