@@ -7,6 +7,9 @@ declare namespace ApiAuth {
     token: string;
     refreshToken: string;
   }
+  interface UserFlag {
+    username: string;
+  }
   /** 返回的用户信息 */
   type UserInfo = Auth.UserInfo;
 }

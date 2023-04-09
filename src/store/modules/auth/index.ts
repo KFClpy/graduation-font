@@ -55,10 +55,13 @@ export const useAuthStore = defineStore('auth-store', {
     /**
      * 处理注册后成功或失败的逻辑
      */
-    async handleActionAfterRegister() {
+    async handleActionAfterRegister(userName: string, backendFlag: ApiAuth.UserFlag) {
       const { toLoginRedirect } = useRouterPush(false);
-			window.$message?.success('注册成功!');
-      toLoginRedirect();
+      const { username } = backendFlag;
+      if (userName === username) {
+        toLoginRedirect();
+        window.$message?.success('注册成功!');
+      }
     },
 
     /**
@@ -138,8 +141,10 @@ export const useAuthStore = defineStore('auth-store', {
      */
     async register(userName: string, password: string) {
       this.registerLoading = true;
-      await fetchRegister(userName, password);
-      await this.handleActionAfterRegister();
+      const { data } = await fetchRegister(userName, password);
+      if (data) {
+        await this.handleActionAfterRegister(userName, data);
+      }
       this.registerLoading = false;
     },
     /**

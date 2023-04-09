@@ -24,7 +24,7 @@ export function fetchLogin(username: string, password: string) {
  * @param password - 密码
  */
 export function fetchRegister(username: string, password: string) {
-  return request.post<void>('/registration', { username, password });
+  return request.post<ApiAuth.UserFlag>('/registration', { username, password });
 }
 
 /** 获取用户信息 */
