@@ -7,7 +7,7 @@ const locale: LocaleMessages<I18nType.Schema> = {
     },
     routes: {
       dashboard: {
-        dashboard: '仪表盘',
+        dashboard: '模糊连接',
         analysis: '分析页',
         workbench: '工作台'
       },
