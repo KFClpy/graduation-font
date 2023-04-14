@@ -46,6 +46,7 @@ const model = reactive({
 });
 
 const rules: FormRules = {
+  userName: formRules.username,
   password: formRules.pwd
 };
 

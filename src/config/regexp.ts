@@ -20,6 +20,6 @@ export const REGEXP_CODE_FOUR = /^\d{4}$/;
 export const REGEXP_URL =
   /(((^https?:(?:\/\/)?)(?:[-;:&=+$,\w]+@)?[A-Za-z0-9.-]+(?::\d+)?|(?:www.|[-;:&=+$,\w]+@)[A-Za-z0-9.-]+)((?:\/[+~%/.\w-_]*)?\??(?:[-+=&;%@.\w_]*)#?(?:[\w]*))?)$/;
 
-/** 数据集名称正则，可以带汉字,可以带下划线 */
-
-export const REGEXP_DATASET_NAME = /^[\u4e00-\u9fa5_a-zA-Z0-9]{1,20}$/;
+/** 数据集名称正则，可以带汉字,可以带下划线,不许有空格 */
+// 写一个数据集名称正则，可以有汉字，可以有下划线，可以有英文可以有数字，不许有空格
+export const REGEXP_DATASET_NAME = /^[\u4e00-\u9fa5_a-zA-Z0-9]+$/;
