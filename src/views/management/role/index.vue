@@ -62,8 +62,6 @@ async function handleClick() {
     show.value = true;
     const userflag = await uploadFile(formData);
     const username = userflag.data?.username;
-    console.log('username', username);
-    console.log('username2', localStg.get('userInfo')?.userName);
     if (username === localStg.get('userInfo')?.userName) {
       window.$message?.success('上传成功');
     }

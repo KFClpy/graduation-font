@@ -5,6 +5,7 @@
         <n-space>
           <n-button @click="getDataSource">有数据</n-button>
           <n-button @click="getEmptyDataSource">空数据</n-button>
+					<n-select v-model:value="value" :options="options" :consistent-menu-width="false" @update:value="handleUpdateValue" />
         </n-space>
         <loading-empty-wrapper class="h-480px" :loading="loading" :empty="empty">
           <n-data-table :columns="columns" :data="dataSource" :flex-height="true" class="h-480px" />
@@ -16,10 +17,11 @@
 
 <script setup lang="tsx">
 import { onMounted, ref } from 'vue';
-import { NSpace, NButton, NPopconfirm } from 'naive-ui';
+import { NSpace, NButton, NPopconfirm, SelectOption } from 'naive-ui';
 import type { DataTableColumn } from 'naive-ui';
 import { useLoadingEmpty } from '@/hooks';
 import { getRandomInteger } from '@/utils';
+import { getDataName } from '@/service/api/data';
 
 interface DataSource {
   name: string;
@@ -81,6 +83,9 @@ function createDataSource(): DataSource[] {
     });
 }
 
+// 创建options，每个option都有label和value，value和option都是列表data_name_list中的值
+const options = ref([]);
+const value = ref();
 function getDataSource() {
   startLoading();
   setTimeout(() => {
@@ -90,6 +95,24 @@ function getDataSource() {
   }, 1000);
 }
 
+async function updateDataName() {
+  const { data } = await getDataName();
+	value.value=data?.data_name[0];
+  console.log(data?.data_name);
+  // 将data_name_list.data中的值赋给options
+  options.value = data?.data_name.map(item => {
+    return {
+      label: item,
+      value: item
+    };
+  });
+  console.log(options);
+}
+
+function handleUpdateValue (value: string, option: SelectOption) {
+	window?.$message?.info('value: ' + JSON.stringify(value))
+	window?.$message?.info('option: ' + JSON.stringify(option))
+}
 function getEmptyDataSource() {
   startLoading();
   setTimeout(() => {
@@ -101,6 +124,7 @@ function getEmptyDataSource() {
 
 onMounted(() => {
   getDataSource();
+  updateDataName();
 });
 </script>
 

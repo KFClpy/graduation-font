@@ -14,6 +14,14 @@ declare namespace ApiAuth {
   type UserInfo = Auth.UserInfo;
 }
 
+declare namespace DataAuth {
+  /** 返回的token和刷新token */
+
+  interface Data_name {
+    data_name: string[];
+  }
+  /** 返回的用户信息 */
+}
 /** 后端返回的路由相关类型 */
 declare namespace ApiRoute {
   /** 后端返回的路由数据类型 */
