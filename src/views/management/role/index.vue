@@ -26,6 +26,7 @@
       </n-spin>
     </n-card>
   </n-modal>
+  <n-button @click="download"> 下载csv文件 </n-button>
 </template>
 
 <script setup lang="ts">
@@ -69,6 +70,35 @@ async function handleClick() {
     window.$message?.error('请先上传文件');
   }
 }
+// 用blob方式接受后端返回的文件流,使用script setup写法
+const download = () => {
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', 'http://localhost:3200/proxy-pattern/file/download', true);
+  xhr.responseType = 'blob';
+  xhr.setRequestHeader('Content-Type', 'application/json');
+
+  xhr.setRequestHeader('Authorization', `Bearer ${localStg.get('token')}`);
+  // eslint-disable-next-line func-names
+  xhr.onload = function () {
+    if (this.status === 200) {
+      const blob = this.response;
+      const reader = new FileReader();
+      reader.readAsDataURL(blob);
+      // eslint-disable-next-line func-names
+      reader.onload = function (e) {
+        const a = document.createElement('a');
+        a.download = 'data.csv';
+        if (typeof e.target.result === 'string') {
+          a.href = e.target.result;
+        }
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      };
+    }
+  };
+  xhr.send(JSON.stringify({ data_name: 'left_test' }));
+};
 </script>
 
 <style scoped></style>
