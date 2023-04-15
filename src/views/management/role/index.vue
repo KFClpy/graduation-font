@@ -1,35 +1,37 @@
 <template>
-  <n-button @click="showModal = true"> 数据导入 </n-button>
-  <n-modal v-model:show="showModal">
-    <n-card style="width: 600px" title="数据导入" :bordered="false" size="huge" role="dialog" aria-modal="true">
-      <n-spin :show="show">
-        <n-form ref="formRef" :model="model" :rules="rules" size="large" :show-label="false">
-          <n-form-item path="uploadData">
-            <n-upload
-              ref="uploadRef"
-              action="#"
-              :max="1"
-              :custom-request="customRequest"
-              :default-upload="false"
-              accept=".csv"
-            >
-              <n-button>上传文件</n-button>
-            </n-upload>
-          </n-form-item>
-          <n-form-item path="dataname">
-            <n-input v-model:value="model.dataname" placeholder="请输入数据集名称" />
-          </n-form-item>
-          <n-form-item path="submit">
-            <n-button style="margin-bottom: 12px" @click="handleClick"> 提交 </n-button>
-          </n-form-item>
-        </n-form>
-      </n-spin>
-    </n-card>
-  </n-modal>
-  <n-button @click="download"> 下载csv文件 </n-button>
+  <div>
+    <n-button @click="showModal = true"> 数据导入 </n-button>
+    <n-modal v-model:show="showModal">
+      <n-card style="width: 600px" title="数据导入" :bordered="false" size="huge" role="dialog" aria-modal="true">
+        <n-spin :show="show">
+          <n-form ref="formRef" :model="model" :rules="rules" size="large" :show-label="false">
+            <n-form-item path="uploadData">
+              <n-upload
+                ref="uploadRef"
+                action="#"
+                :max="1"
+                :custom-request="customRequest"
+                :default-upload="false"
+                accept=".csv"
+              >
+                <n-button>上传文件</n-button>
+              </n-upload>
+            </n-form-item>
+            <n-form-item path="dataname">
+              <n-input v-model:value="model.dataname" placeholder="请输入数据集名称" />
+            </n-form-item>
+            <n-form-item path="submit">
+              <n-button style="margin-bottom: 12px" @click="handleClick"> 提交 </n-button>
+            </n-form-item>
+          </n-form>
+        </n-spin>
+      </n-card>
+    </n-modal>
+    <n-button @click="download"> 下载csv文件 </n-button>
+  </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="tsx">
 import { reactive, ref } from 'vue';
 import type { UploadInst, FormRules, FormInst } from 'naive-ui';
 import { formRules, localStg } from '@/utils';
