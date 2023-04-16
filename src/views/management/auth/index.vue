@@ -10,6 +10,7 @@
             @update:value="handleUpdateValue"
           />
         </n-space>
+        <n-button @click="download(value)"> 下载csv文件 </n-button>
         <loading-empty-wrapper class="h-480px" :loading="loading" :empty="empty">
           <n-data-table
             :columns="columns"
@@ -26,9 +27,10 @@
 
 <script setup lang="tsx">
 import { onMounted, reactive, ref } from 'vue';
-import { NSpace, NButton, NPopconfirm, PaginationProps } from 'naive-ui';
-import type { DataTableColumn, SelectOption } from 'naive-ui';
+import { NSpace, NButton, NPopconfirm } from 'naive-ui';
+import type { DataTableColumn, SelectOption, PaginationProps } from 'naive-ui';
 import { useLoadingEmpty } from '@/hooks';
+import { localStg } from '@/utils';
 import { getDataName, getDataTable } from '@/service/api/data';
 
 const { loading, startLoading, endLoading, empty } = useLoadingEmpty();
@@ -50,6 +52,34 @@ async function updateDataName() {
     };
   });
 }
+const download = (data_name: string) => {
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', 'http://localhost:3200/proxy-pattern/file/download', true);
+  xhr.responseType = 'blob';
+  xhr.setRequestHeader('Content-Type', 'application/json');
+
+  xhr.setRequestHeader('Authorization', `Bearer ${localStg.get('token')}`);
+  // eslint-disable-next-line func-names
+  xhr.onload = function () {
+    if (this.status === 200) {
+      const blob = this.response;
+      const reader = new FileReader();
+      reader.readAsDataURL(blob);
+      // eslint-disable-next-line func-names
+      reader.onload = function (e) {
+        const a = document.createElement('a');
+        a.download = `${data_name}.csv`;
+        if (typeof e.target.result === 'string') {
+          a.href = e.target.result;
+        }
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      };
+    }
+  };
+  xhr.send(JSON.stringify({ data_name }));
+};
 async function updateDataTable() {
   startLoading();
   const { data } = await getDataTable(value.value);
@@ -103,17 +133,17 @@ async function updateDataTable() {
   endLoading();
 }
 const pagination: PaginationProps = reactive({
-	page: 1,
-	pageSize: 10,
-	showSizePicker: true,
-	pageSizes: [10, 15, 20, 25, 30],
-	onChange: (page: number) => {
-		pagination.page = page;
-	},
-	onUpdatePageSize: (pageSize: number) => {
-		pagination.pageSize = pageSize;
-		pagination.page = 1;
-	}
+  page: 1,
+  pageSize: 10,
+  showSizePicker: true,
+  pageSizes: [10, 15, 20, 25, 30],
+  onChange: (page: number) => {
+    pagination.page = page;
+  },
+  onUpdatePageSize: (pageSize: number) => {
+    pagination.pageSize = pageSize;
+    pagination.page = 1;
+  }
 });
 function handleUpdateValue(value: string, option: SelectOption) {
   // window?.$message?.info(`value: ${JSON.stringify(value)}`);
