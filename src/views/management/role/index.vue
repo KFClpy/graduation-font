@@ -64,6 +64,9 @@ async function handleClick() {
     const username = userflag.data?.username;
     if (username === localStg.get('userInfo')?.userName) {
       window.$message?.success('上传成功');
+			showModal.value=false;
+		} else {
+			window.$message?.error('上传失败');
     }
     show.value = false;
   } else {
