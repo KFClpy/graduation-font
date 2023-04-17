@@ -7,3 +7,6 @@ export const getDataName = async () => {
 export const getDataTable = async (data_name: string) => {
 	return request.post<object>('/getDataTable', { data_name });
 }
+export function autoFuzzyJoin(data_name_left: string, data_name_right: string, data_name_generate: string) {
+	return request.post<ApiAuth.UserFlag>('/autoFuzzyJoin', {data_name_left, data_name_right, data_name_generate});
+}

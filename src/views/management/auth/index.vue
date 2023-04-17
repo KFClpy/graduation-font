@@ -1,6 +1,6 @@
 <template>
   <div class="h-full overflow-hidden">
-    <n-card title="表格" class="h-full shadow-sm rounded-16px">
+    <n-card title="数据集编辑" class="h-full shadow-sm rounded-16px">
       <n-space :vertical="true">
         <n-space>
           <n-select
