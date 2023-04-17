@@ -31,7 +31,7 @@ import { NSpace, NButton, NPopconfirm } from 'naive-ui';
 import type { DataTableColumn, SelectOption, PaginationProps } from 'naive-ui';
 import { useLoadingEmpty } from '@/hooks';
 import { localStg } from '@/utils';
-import { getDataName, getDataTable } from '@/service/api/data';
+import { deleteOneData, getDataName, getDataTable } from '@/service/api/data';
 
 const { loading, startLoading, endLoading, empty } = useLoadingEmpty();
 
@@ -85,12 +85,12 @@ async function updateDataTable() {
   const { data } = await getDataTable(value.value);
   const data_header = Object.keys(data);
   const data_value = Object.values(data);
-	let data_header_now = [];
-	for (let i=0;i<data_header.length;i++){
-		if (data_header[i] != 'tid'){
-			data_header_now.push(data_header[i]);
-		}
-	}
+  const data_header_now = [];
+  for (let i = 0; i < data_header.length; i++) {
+    if (data_header[i] != 'tid') {
+      data_header_now.push(data_header[i]);
+    }
+  }
   columns = [];
   columns = data_header_now.map(item => {
     return {
@@ -103,13 +103,13 @@ async function updateDataTable() {
     key: 'action',
     title: 'Action',
     align: 'center',
-    render: () => {
+    render: row => {
       return (
         <NSpace justify={'center'}>
           <NButton size={'small'} onClick={() => {}}>
             编辑
           </NButton>
-          <NPopconfirm onPositiveClick={() => {}}>
+          <NPopconfirm onPositiveClick={() => handleDeleteTable(row.tid)}>
             {{
               default: () => '确认删除',
               trigger: () => <NButton size={'small'}>删除</NButton>
@@ -154,6 +154,11 @@ const pagination: PaginationProps = reactive({
 function handleUpdateValue(value: string, option: SelectOption) {
   // window?.$message?.info(`value: ${JSON.stringify(value)}`);
   // window?.$message?.info(`option: ${JSON.stringify(option)}`);
+  updateDataTable();
+}
+async function handleDeleteTable(rowId: string) {
+  window.$message?.info(`点击了删除，rowId为${rowId}`);
+  await deleteOneData(Number(rowId));
   updateDataTable();
 }
 

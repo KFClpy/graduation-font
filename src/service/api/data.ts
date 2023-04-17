@@ -10,3 +10,7 @@ export const getDataTable = async (data_name: string) => {
 export function autoFuzzyJoin(data_name_left: string, data_name_right: string, data_name_generate: string) {
 	return request.post<ApiAuth.UserFlag>('/autoFuzzyJoin', {data_name_left, data_name_right, data_name_generate});
 }
+
+export function deleteOneData(tid: number) {
+  return request.post<ApiAuth.UserFlag>('/deleteOneData', { tid });
+}
