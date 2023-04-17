@@ -85,8 +85,14 @@ async function updateDataTable() {
   const { data } = await getDataTable(value.value);
   const data_header = Object.keys(data);
   const data_value = Object.values(data);
+	let data_header_now = [];
+	for (let i=0;i<data_header.length;i++){
+		if (data_header[i] != 'tid'){
+			data_header_now.push(data_header[i]);
+		}
+	}
   columns = [];
-  columns = data_header.map(item => {
+  columns = data_header_now.map(item => {
     return {
       title: item,
       key: item,
