@@ -111,7 +111,7 @@ async function updateDataTable() {
   const data_value = Object.values(data);
   const data_header_now = [];
   for (let i = 0; i < data_header.length; i++) {
-    if (data_header[i] != 'tid') {
+    if (data_header[i] !== 'tid') {
       data_header_now.push(data_header[i]);
     }
   }
@@ -200,21 +200,19 @@ async function handleDeleteTable(rowId: string) {
   const { data } = await deleteOneData(Number(rowId));
   if (data?.username === localStg.get('userInfo')?.userName) {
     window.$message?.success(`删除成功`);
-  }
-	else{
+  } else {
     window.$message?.error(`删除失败`);
-	}
-  updateDataTable();
+  }
+  await updateDataTable();
 }
 async function handleClick() {
-	const { data } = await editOneData(rowID.value,valueEditInput.value);
-	if (data?.username === localStg.get('userInfo')?.userName) {
-		window.$message?.success(`编辑成功`);
-	}
-	else{
-		window.$message?.error(`编辑失败`);
-	}
-	updateDataTable();
+  const { data } = await editOneData(rowID.value, valueEditInput.value);
+  if (data?.username === localStg.get('userInfo')?.userName) {
+    window.$message?.success(`编辑成功`);
+  } else {
+    window.$message?.error(`编辑失败`);
+  }
+  await updateDataTable();
 }
 onMounted(() => {
   // getDataSource();
