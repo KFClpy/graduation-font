@@ -14,3 +14,7 @@ export function autoFuzzyJoin(data_name_left: string, data_name_right: string, d
 export function deleteOneData(tid: number) {
   return request.post<ApiAuth.UserFlag>('/deleteOneData', { tid });
 }
+
+export function editOneData(tid: number, data: object) {
+	return request.post<ApiAuth.UserFlag>('/editOneData', { tid, data });
+}

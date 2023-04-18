@@ -27,7 +27,7 @@
 import { onMounted, reactive, ref } from 'vue';
 import type { FormInst, FormRules } from 'naive-ui';
 import { NSpace } from 'naive-ui';
-import { formRules } from '@/utils';
+import { formRules, localStg } from '@/utils';
 import { autoFuzzyJoin, getDataName } from '@/service/api/data';
 const valuel = ref('请选择第一个数据集');
 const valuer = ref('请选择第二个数据集');
@@ -54,7 +54,10 @@ async function updateDataName() {
 async function handleClick() {
   await formRef.value?.validate();
   show.value = true;
-  await autoFuzzyJoin(valuel.value, valuer.value, model.data_name_generate);
+	const { data }=await autoFuzzyJoin(valuel.value, valuer.value, model.data_name_generate);
+	if (data?.username === localStg.get('userInfo')?.userName) {
+		window.$message?.success(`连接成功`);
+	}
   await updateDataName();
   show.value = false;
 }
