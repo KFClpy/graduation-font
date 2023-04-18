@@ -10,7 +10,7 @@ const serviceEnv: ServiceEnv = {
     url: 'http://localhost:8080'
   },
   prod: {
-    url: 'http://localhost:8080'
+    url: 'http://127.0.0.1:5000'
   }
 };
 

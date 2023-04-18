@@ -1,6 +1,6 @@
 {
   "darkMode": false,
-  "followSystemTheme": true,
+  "followSystemTheme": false,
   "layout": {
     "minWidth": 900,
     "mode": "vertical",
@@ -23,7 +23,7 @@
       }
     ]
   },
-  "scrollMode": "content",
+  "scrollMode": "wrapper",
   "scrollModeList": [
     {
       "value": "wrapper",
@@ -34,7 +34,7 @@
       "label": "主体滚动"
     }
   ],
-  "themeColor": "#1890ff",
+  "themeColor": "#c0ca33",
   "themeColorList": [
     "#1890ff",
     "#409EFF",
