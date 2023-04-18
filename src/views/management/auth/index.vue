@@ -175,7 +175,13 @@ const pagination: PaginationProps = reactive({
 });
 function handleEditTable(rowId: string) {
   const findItem = dataSource.value.find(item => item.tid === Number(rowId));
-  options_edit.value = Object.keys(findItem)?.map(item => {
+  const changeKeys = [];
+  Object.keys(findItem).forEach(item => {
+    if (item !== 'tid') {
+      changeKeys.push(item);
+    }
+  });
+  options_edit.value = changeKeys.map(item => {
     return {
       label: item,
       value: item
@@ -209,6 +215,7 @@ async function handleClick() {
   const { data } = await editOneData(rowID.value, valueEditInput.value);
   if (data?.username === localStg.get('userInfo')?.userName) {
     window.$message?.success(`编辑成功`);
+    showModal.value = false;
   } else {
     window.$message?.error(`编辑失败`);
   }
