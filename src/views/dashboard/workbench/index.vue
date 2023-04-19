@@ -57,6 +57,7 @@ const rules: FormRules = {
 async function handleClick() {
   await formRef.value?.validate();
   await uploadRef.value?.submit();
+	await uploadRef.value?.clear();
   formData.append('data_name', model.dataname);
   if (formData.get('data_file') !== null) {
     show.value = true;
