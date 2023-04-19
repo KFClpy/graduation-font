@@ -1,6 +1,6 @@
 <template>
   <hover-container
-    tooltip-content="github"
+
     class="w-40px h-full"
     :inverted="theme.header.inverted"
     @click="handleClickLink"
@@ -16,7 +16,7 @@ defineOptions({ name: 'GithubSite' });
 
 const theme = useThemeStore();
 function handleClickLink() {
-  window.open('https://github.com/honghuangdc/soybean-admin', '_blank');
+  window.open('https://github.com/KFClpy/graduation-font', '_blank');
 }
 </script>
 

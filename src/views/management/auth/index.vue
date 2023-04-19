@@ -23,7 +23,7 @@
       </n-space>
     </n-card>
     <n-modal v-model:show="showModal">
-      <n-card style="width: 600px" title="数据导入" :bordered="false" size="huge" role="dialog" aria-modal="true">
+      <n-card style="width: 600px" title="数据编辑" :bordered="false" size="huge" role="dialog" aria-modal="true">
         <n-form ref="formRef" size="large" :show-label="false">
           <n-form-item>
             <n-select
