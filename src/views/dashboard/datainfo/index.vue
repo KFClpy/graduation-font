@@ -1,17 +1,13 @@
 <template>
-	<div class="h-full overflow-hidden">
-		<n-card title="表格" class="h-full shadow-sm rounded-16px">
-			<n-space :vertical="true">
-				<n-space>
-					<n-button @click="getDataSource">有数据</n-button>
-					<n-button @click="getEmptyDataSource">空数据</n-button>
-				</n-space>
-				<loading-empty-wrapper class="h-480px" :loading="loading" :empty="empty">
-					<n-data-table :columns="columns" :data="dataSource" :flex-height="true" class="h-480px" />
-				</loading-empty-wrapper>
-			</n-space>
-		</n-card>
-	</div>
+  <div class="h-full overflow-hidden">
+    <n-card title="数据集管理" class="h-full shadow-sm rounded-16px">
+      <n-space :vertical="true">
+        <loading-empty-wrapper class="h-480px" :loading="loading" :empty="empty">
+          <n-data-table :columns="columns" :data="dataSource" :flex-height="true" class="h-480px" />
+        </loading-empty-wrapper>
+      </n-space>
+    </n-card>
+  </div>
 </template>
 
 <script setup lang="tsx">
@@ -19,88 +15,68 @@ import { onMounted, ref } from 'vue';
 import { NSpace, NButton, NPopconfirm } from 'naive-ui';
 import type { DataTableColumn } from 'naive-ui';
 import { useLoadingEmpty } from '@/hooks';
-import { getRandomInteger } from '@/utils';
+import { localStg } from '@/utils';
+import { deleteDataInfo, getDataInfo } from '@/service/api/data';
 
-interface DataSource {
-	name: string;
-	age: number;
-	address: string;
-}
-
-const { loading, startLoading, endLoading, empty, setEmpty } = useLoadingEmpty();
+const { loading, startLoading, endLoading, empty } = useLoadingEmpty();
 
 const columns: DataTableColumn[] = [
-	{
-		title: 'Name',
-		key: 'name',
-		align: 'center'
-	},
-	{
-		title: 'Age',
-		key: 'age',
-		align: 'center'
-	},
-	{
-		title: 'Address',
-		key: 'address',
-		align: 'center'
-	},
-	{
-		key: 'action',
-		title: 'Action',
-		align: 'center',
-		render: () => {
-			return (
-				<NSpace justify={'center'}>
-					<NButton size={'small'} onClick={() => {}}>
-						编辑
-					</NButton>
-					<NPopconfirm onPositiveClick={() => {}}>
-						{{
-							default: () => '确认删除',
-							trigger: () => <NButton size={'small'}>删除</NButton>
-						}}
-					</NPopconfirm>
-				</NSpace>
-			);
-		}
-	}
+  {
+    title: '数据集名称',
+    key: 'data_name',
+    align: 'center'
+  },
+  {
+    title: '列数',
+    key: 'columns',
+    align: 'center'
+  },
+  {
+    title: '行数',
+    key: 'rows',
+    align: 'center'
+  },
+  {
+    key: 'action',
+    title: 'Action',
+    align: 'center',
+    render: row => {
+      return (
+        <NSpace justify={'center'}>
+          <NButton size={'small'} onClick={() => {}}>
+            编辑
+          </NButton>
+          <NPopconfirm onPositiveClick={() => handleDeleteTable(row.data_name)}>
+            {{
+              default: () => '确认删除',
+              trigger: () => <NButton size={'small'}>删除</NButton>
+            }}
+          </NPopconfirm>
+        </NSpace>
+      );
+    }
+  }
 ];
 
-const dataSource = ref<DataSource[]>([]);
+const dataSource = ref([]);
 
-function createDataSource(): DataSource[] {
-	return Array(100)
-		.fill(1)
-		.map((_item, index) => {
-			return {
-				name: `Name${index}`,
-				age: getRandomInteger(30, 20),
-				address: '中国'
-			};
-		});
+async function updateDataTable() {
+  startLoading();
+  const { data } = await getDataInfo();
+  dataSource.value = data;
+  endLoading();
 }
-
-function getDataSource() {
-	startLoading();
-	setTimeout(() => {
-		dataSource.value = createDataSource();
-		endLoading();
-		setEmpty(!dataSource.value.length);
-	}, 1000);
+async function handleDeleteTable(data_name: string) {
+  const { data } = await deleteDataInfo(data_name);
+  if (data?.username === localStg.get('userInfo')?.userName) {
+    window.$message?.success(`删除成功`);
+  } else {
+    window.$message?.error(`删除失败`);
+  }
+  await updateDataTable();
 }
-
-function getEmptyDataSource() {
-	startLoading();
-	setTimeout(() => {
-		dataSource.value = [];
-		endLoading();
-		setEmpty(!dataSource.value.length);
-	}, 1000);
-}
-
 onMounted(() => {
-	getDataSource();
+  updateDataTable();
 });
 </script>
 

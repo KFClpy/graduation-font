@@ -19,3 +19,10 @@ export function editOneData(tid: number, data: object) {
   return request.post<ApiAuth.UserFlag>('/editOneData', { tid, data });
 }
 
+export function getDataInfo(){
+  return request.post<object>('/getDataInfo');
+}
+
+export function deleteDataInfo(data_name: string) {
+  return request.post<ApiAuth.UserFlag>('/deleteDataInfo', { data_name });
+}
