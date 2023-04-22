@@ -19,7 +19,7 @@ export function editOneData(tid: number, data: object) {
   return request.post<ApiAuth.UserFlag>('/editOneData', { tid, data });
 }
 
-export function getDataInfo(){
+export function getDataInfo() {
   return request.post<object>('/getDataInfo');
 }
 
@@ -32,5 +32,9 @@ export function getColumnInfo(data_name: string) {
 }
 
 export function deleteOneColumn(data_name: string, column_id: string) {
-	return request.post<ApiAuth.UserFlag>('/deleteOneColumn', { data_name, column_id });
+  return request.post<ApiAuth.UserFlag>('/deleteOneColumn', { data_name, column_id });
+}
+
+export function editOneColumn(data_name: string, column_id: string, new_column_name: string) {
+  return request.post<ApiAuth.UserFlag>('/editOneColumn', { data_name, column_id, new_column_name });
 }
