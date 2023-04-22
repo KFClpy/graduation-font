@@ -26,3 +26,11 @@ export function getDataInfo(){
 export function deleteDataInfo(data_name: string) {
   return request.post<ApiAuth.UserFlag>('/deleteDataInfo', { data_name });
 }
+
+export function getColumnInfo(data_name: string) {
+  return request.post<object>('/getColumnInfo', { data_name });
+}
+
+export function deleteOneColumn(data_name: string, column_id: string) {
+	return request.post<ApiAuth.UserFlag>('/deleteOneColumn', { data_name, column_id });
+}
