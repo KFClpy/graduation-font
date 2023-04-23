@@ -20,6 +20,15 @@ declare namespace DataAuth {
   interface Data_name {
     data_name: string[];
   }
+  interface Preprocessor {
+    preprocessor: string[];
+  }
+  interface Tokenizer {
+    tokenizer: string[];
+  }
+  interface DistanceFunction {
+    distance_function: string[];
+  }
   /** 返回的用户信息 */
 }
 /** 后端返回的路由相关类型 */
