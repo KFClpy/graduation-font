@@ -3,39 +3,41 @@
     <n-spin :show="show">
       <n-card title="手动模糊连接" class="h-full shadow-sm rounded-16px">
         <n-form ref="formRef" :model="model" :rules="rules" size="large" label-placement="top">
-          <n-form-item path="data_name_left" label="左数据集">
-            <n-space>
-              <n-select v-model:value="valuel" :options="options" :consistent-menu-width="false" />
-            </n-space>
-          </n-form-item>
-          <n-form-item path="data_name_right" label="右数据集">
-            <n-space>
-              <n-select v-model:value="valuer" :options="options" :consistent-menu-width="false" />
-            </n-space>
-          </n-form-item>
-          <n-form-item path="preprocessor">
-            <n-space>
-              <n-select
-                v-model:value="value_preprocessor"
-                :options="options_preprocessor"
-                :consistent-menu-width="false"
-              />
-            </n-space>
-          </n-form-item>
-          <n-form-item path="tokenizer">
-            <n-space>
-              <n-select v-model:value="value_tokenizer" :options="options_tokenizer" :consistent-menu-width="false" />
-            </n-space>
-          </n-form-item>
-          <n-form-item path="addDistanceFunction">
-            <n-button @click="handleClickInside">添加距离函数</n-button>
-          </n-form-item>
-          <n-form-item path="DistanceFunction">
-            <n-dynamic-tags v-show="tagIf" v-model:value="tags" :input-props="InputProps" @update:value="updateTag" />
-          </n-form-item>
-          <n-form-item path="data_name_generate">
-            <n-input v-model:value="model.data_name_generate" placeholder="请输入生成数据集名称" />
-          </n-form-item>
+          <n-grid :cols="24" :x-gap="24">
+            <n-form-item-gi :span="8" path="data_name_left" label="左数据集">
+              <n-space>
+                <n-select v-model:value="valuel" :options="options" :consistent-menu-width="false" />
+              </n-space>
+            </n-form-item-gi>
+            <n-form-item-gi :span="16" path="data_name_right" label="右数据集">
+              <n-space>
+                <n-select v-model:value="valuer" :options="options" :consistent-menu-width="false" />
+              </n-space>
+            </n-form-item-gi>
+            <n-form-item-gi :span="8" path="preprocessor" label="预处理方法">
+              <n-space>
+                <n-select
+                  v-model:value="value_preprocessor"
+                  :options="options_preprocessor"
+                  :consistent-menu-width="false"
+                />
+              </n-space>
+            </n-form-item-gi>
+            <n-form-item-gi :span="8" path="tokenizer" label="分词方法">
+              <n-space>
+                <n-select v-model:value="value_tokenizer" :options="options_tokenizer" :consistent-menu-width="false" />
+              </n-space>
+            </n-form-item-gi>
+            <n-form-item-gi :span="8" path="DistanceFunction" label="距离函数">
+              <n-button @click="handleClickInside">添加距离函数</n-button>
+            </n-form-item-gi>
+            <n-form-item-gi :span="24" path="DistanceAdd">
+              <n-dynamic-tags v-show="tagIf" v-model:value="tags" :input-props="InputProps" @update:value="updateTag" />
+            </n-form-item-gi>
+            <n-form-item-gi :span="24" path="data_name_generate">
+              <n-input v-model:value="model.data_name_generate" placeholder="请输入生成数据集名称" />
+            </n-form-item-gi>
+          </n-grid>
         </n-form>
         <n-modal v-model:show="showModal">
           <n-card
@@ -155,14 +157,16 @@ async function handleClick() {
     const obj = JSON.parse(item);
     Object.assign(distance_submit, obj);
   });
-  console.log(distance_submit);
+  const result = JSON.stringify({
+    distance_function: distance_submit,
+    preprocessor: value_preprocessor.value,
+    tokenizer: value_tokenizer.value
+  });
   const { data } = await manualFuzzyJoin(
     valuel.value,
     valuer.value,
     model.data_name_generate,
-    value_preprocessor.value,
-    value_tokenizer.value,
-    distance_submit
+    result
   );
   if (data?.username === localStg.get('userInfo')?.userName) {
     window.$message?.success(`连接成功`);

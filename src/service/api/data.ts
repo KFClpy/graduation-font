@@ -44,16 +44,12 @@ export function manualFuzzyJoin(
   data_name_left: string,
   data_name_right: string,
   data_name_generate: string,
-  preprocessor: string,
-  tokenizer: string,
-  distance_function: object
+  config: string
 ) {
   return request.post<ApiAuth.UserFlag>('/manualFuzzyJoin', {
     data_name_left,
     data_name_right,
     data_name_generate,
-    preprocessor,
-    tokenizer,
-    distance_function
+    config
   });
 }
