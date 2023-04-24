@@ -38,3 +38,22 @@ export function deleteOneColumn(data_name: string, column_id: string) {
 export function editOneColumn(data_name: string, column_id: string, new_column_name: string) {
   return request.post<ApiAuth.UserFlag>('/editOneColumn', { data_name, column_id, new_column_name });
 }
+
+// eslint-disable-next-line max-params
+export function manualFuzzyJoin(
+  data_name_left: string,
+  data_name_right: string,
+  data_name_generate: string,
+  preprocessor: string,
+  tokenizer: string,
+  distance_function: object
+) {
+  return request.post<ApiAuth.UserFlag>('/manualFuzzyJoin', {
+    data_name_left,
+    data_name_right,
+    data_name_generate,
+    preprocessor,
+    tokenizer,
+    distance_function
+  });
+}
