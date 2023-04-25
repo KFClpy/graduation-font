@@ -11,7 +11,7 @@
       <github-site />
       <full-screen />
       <theme-mode />
-      <system-message />
+<!--      <system-message />-->
       <setting-button v-if="showButton" />
       <user-avatar />
     </div>
