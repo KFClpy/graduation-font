@@ -10,13 +10,26 @@ import mock from './mock';
 import visualizer from './visualizer';
 import compress from './compress';
 import pwa from './pwa';
+import wasm from 'vite-plugin-wasm';
+import topLevelAwait from 'vite-plugin-top-level-await';
 
 /**
  * vite插件
  * @param viteEnv - 环境变量配置
  */
 export function setupVitePlugins(viteEnv: ImportMetaEnv): (PluginOption | PluginOption[])[] {
-  const plugins = [vue(), vueJsx(), html(viteEnv), ...unplugin(viteEnv), unocss(), mock, progress(), pageRoute()];
+  const plugins = [
+    vue(),
+    vueJsx(),
+    html(viteEnv),
+    ...unplugin(viteEnv),
+    unocss(),
+    mock,
+    progress(),
+    pageRoute(),
+    wasm(),
+    topLevelAwait()
+  ];
 
   if (viteEnv.VITE_VISUALIZER === 'Y') {
     plugins.push(visualizer as PluginOption);
