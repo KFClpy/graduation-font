@@ -10,7 +10,14 @@
             @update:value="handleUpdateValue"
           />
         </n-space>
-        <n-button :disabled="!downloadAllow" @click="download(value)"> 下载csv文件 </n-button>
+        <n-space>
+          <n-space>
+            <n-button :disabled="!downloadAllow" @click="download(value)"> 下载csv文件 </n-button>
+          </n-space>
+          <n-space>
+            <n-button :disabled="!downloadAllow" type="info" @click="addData">增加</n-button>
+          </n-space>
+        </n-space>
         <loading-empty-wrapper class="h-480px" :loading="loading" :empty="empty">
           <n-data-table
             :columns="columns"
@@ -23,7 +30,7 @@
       </n-space>
     </n-card>
     <n-modal v-model:show="showModal">
-      <n-card style="width: 600px" title="数据编辑" :bordered="false" size="huge" role="dialog" aria-modal="true">
+      <n-card style="width: 600px" :title="cardTitle" :bordered="false" size="huge" role="dialog" aria-modal="true">
         <n-form ref="formRef" size="large" :show-label="false">
           <n-form-item>
             <n-select
@@ -37,7 +44,7 @@
             <n-input v-model:value="valueEditInput[valueSelect]" placeholder="请输入更改完的属性值" />
           </n-form-item>
           <n-form-item>
-            <n-button @click="handleClick"> 修改 </n-button>
+            <n-button @click="handleClick"> {{ buttonTitle }} </n-button>
           </n-form-item>
         </n-form>
       </n-card>
@@ -51,7 +58,7 @@ import { NSpace, NButton, NPopconfirm } from 'naive-ui';
 import type { DataTableColumn, SelectOption, PaginationProps } from 'naive-ui';
 import { useLoadingEmpty } from '@/hooks';
 import { localStg } from '@/utils';
-import { deleteOneData, editOneData, getDataName, getDataTable } from '@/service/api/data';
+import { addOneData, deleteOneData, editOneData, getDataName, getDataTable } from '@/service/api/data';
 
 const { loading, startLoading, endLoading, empty } = useLoadingEmpty();
 
@@ -66,6 +73,9 @@ const valueEditInput = ref({});
 const showModal = ref(false);
 const rowID = ref(0);
 const downloadAllow = ref(false);
+const cardTitle = ref('数据编辑');
+const buttonTitle = ref('修改');
+
 async function updateDataName() {
   const { data } = await getDataName();
   // value.value=data?.data_name[0];
@@ -175,6 +185,8 @@ const pagination: PaginationProps = reactive({
   }
 });
 function handleEditTable(rowId: string) {
+  cardTitle.value = '数据编辑';
+  buttonTitle.value = '修改';
   const findItem = dataSource.value.find(item => item.tid === Number(rowId));
   const changeKeys = [];
   Object.keys(findItem).forEach(item => {
@@ -190,11 +202,33 @@ function handleEditTable(rowId: string) {
   });
   valueSelect.value = Object.keys(findItem)[0];
   const findItemNew = {};
-  Object.keys(findItem).forEach(item => {
+  changeKeys.forEach(item => {
     findItemNew[item] = String(findItem[item]);
   });
   valueEditInput.value = findItemNew;
   rowID.value = Number(rowId);
+  showModal.value = true;
+}
+function addData() {
+  cardTitle.value = '数据添加';
+  buttonTitle.value = '添加';
+  const changeKeys = [];
+  Object.keys(dataSource.value[0]).forEach(item => {
+    if (item !== 'tid') {
+      changeKeys.push(item);
+    }
+  });
+  options_edit.value = changeKeys.map(item => {
+    return {
+      label: item,
+      value: item
+    };
+  });
+  const findItemNew = {};
+  changeKeys.forEach(item => {
+    findItemNew[item] = '';
+  });
+  valueEditInput.value = findItemNew;
   showModal.value = true;
 }
 function handleUpdateValue(value: string, option: SelectOption) {
@@ -215,12 +249,22 @@ async function handleDeleteTable(rowId: string) {
   await updateDataTable();
 }
 async function handleClick() {
-  const { data } = await editOneData(rowID.value, valueEditInput.value);
-  if (data?.username === localStg.get('userInfo')?.userName) {
-    window.$message?.success(`编辑成功`);
-    showModal.value = false;
-  } else {
-    window.$message?.error(`编辑失败`);
+  if (cardTitle.value === '数据编辑') {
+    const { data } = await editOneData(rowID.value, valueEditInput.value);
+    if (data?.username === localStg.get('userInfo')?.userName) {
+      window.$message?.success(`编辑成功`);
+      showModal.value = false;
+    } else {
+      window.$message?.error(`编辑失败`);
+    }
+  } else if (cardTitle.value === '数据添加') {
+    const { data } = await addOneData(valueEditInput.value, value.value);
+    if (data?.username === localStg.get('userInfo')?.userName) {
+      window.$message?.success(`添加成功`);
+      showModal.value = false;
+    } else {
+      window.$message?.error(`添加失败`);
+    }
   }
   await updateDataTable();
 }
