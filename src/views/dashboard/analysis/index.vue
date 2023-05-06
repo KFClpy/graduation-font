@@ -15,7 +15,12 @@
             <n-button :disabled="!downloadAllow" @click="download(value)"> 下载csv文件 </n-button>
           </n-space>
           <n-space>
-            <n-button :disabled="!downloadAllow" type="info" @click="addData">增加</n-button>
+            <n-button :disabled="!downloadAllow" type="success" @click="addData">增加</n-button>
+          </n-space>
+          <n-space>
+            <n-button :disabled="!downloadAllow" @click="searchData">
+              <icon-uil-search class="text-20px" />
+            </n-button>
           </n-space>
         </n-space>
         <loading-empty-wrapper class="h-480px" :loading="loading" :empty="empty">
@@ -58,7 +63,7 @@ import { NSpace, NButton, NPopconfirm } from 'naive-ui';
 import type { DataTableColumn, SelectOption, PaginationProps } from 'naive-ui';
 import { useLoadingEmpty } from '@/hooks';
 import { localStg } from '@/utils';
-import { addOneData, deleteOneData, editOneData, getDataName, getDataTable } from '@/service/api/data';
+import { addOneData, deleteOneData, editOneData, getDataName, getDataTable, searchSomeData } from '@/service/api/data';
 
 const { loading, startLoading, endLoading, empty } = useLoadingEmpty();
 
@@ -75,7 +80,8 @@ const rowID = ref(0);
 const downloadAllow = ref(false);
 const cardTitle = ref('数据编辑');
 const buttonTitle = ref('修改');
-
+const searchType = ref('');
+const searchValue = ref('');
 async function updateDataName() {
   const { data } = await getDataName();
   // value.value=data?.data_name[0];
@@ -231,6 +237,28 @@ function addData() {
   valueEditInput.value = findItemNew;
   showModal.value = true;
 }
+function searchData() {
+  cardTitle.value = '数据查询';
+  buttonTitle.value = '查询';
+  const changeKeys = [];
+  Object.keys(dataSource.value[0]).forEach(item => {
+    if (item !== 'tid') {
+      changeKeys.push(item);
+    }
+  });
+  options_edit.value = changeKeys.map(item => {
+    return {
+      label: item,
+      value: item
+    };
+  });
+  const findItemNew = {};
+  changeKeys.forEach(item => {
+    findItemNew[item] = '';
+  });
+  valueEditInput.value = findItemNew;
+  showModal.value = true;
+}
 function handleUpdateValue(value: string, option: SelectOption) {
   // window?.$message?.info(`value: ${JSON.stringify(value)}`);
   // window?.$message?.info(`option: ${JSON.stringify(option)}`);
@@ -238,7 +266,9 @@ function handleUpdateValue(value: string, option: SelectOption) {
   else downloadAllow.value = true;
   updateDataTable();
 }
-function handleUpdateValueEdit() {}
+function handleUpdateValueEdit() {
+  searchType.value = valueSelect.value;
+}
 async function handleDeleteTable(rowId: string) {
   const { data } = await deleteOneData(Number(rowId));
   if (data?.username === localStg.get('userInfo')?.userName) {
@@ -257,6 +287,7 @@ async function handleClick() {
     } else {
       window.$message?.error(`编辑失败`);
     }
+    await updateDataTable();
   } else if (cardTitle.value === '数据添加') {
     const { data } = await addOneData(valueEditInput.value, value.value);
     if (data?.username === localStg.get('userInfo')?.userName) {
@@ -265,8 +296,28 @@ async function handleClick() {
     } else {
       window.$message?.error(`添加失败`);
     }
+    await updateDataTable();
+  } else if (cardTitle.value === '数据查询') {
+    const { data } = await searchSomeData(valueSelect.value, valueEditInput.value[valueSelect.value], value.value);
+    const data_value = Object.values(data.data);
+    const data_header = Object.keys(data.data);
+    dataSource.value = [];
+    // data_value是一个类，内容是二维数组，他的行号是data_header的下标，列号是每个data_header的值，把每一行的值赋给data_source
+    let rowlen = 0;
+    for (let i = 0; i < data_value.length; i++) {
+      for (let j = 0; j < 1; j++) {
+        rowlen = data_value[i].length;
+      }
+    }
+    for (let i = 0; i < rowlen; i++) {
+      const data_source = {};
+      for (let j = 0; j < data_header.length; j++) {
+        data_source[data_header[j]] = data_value[j][i];
+      }
+      dataSource.value.push(data_source);
+    }
+    showModal.value = false;
   }
-  await updateDataTable();
 }
 onMounted(() => {
   // getDataSource();
