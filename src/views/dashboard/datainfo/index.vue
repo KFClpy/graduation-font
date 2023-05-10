@@ -32,7 +32,7 @@
       </n-card>
     </n-modal>
     <n-modal v-model:show="showModalAdd">
-      <n-card style="width: 600px" title="名称编辑" :bordered="false" size="huge" role="dialog" aria-modal="true">
+      <n-card style="width: 600px" title="添加列" :bordered="false" size="huge" role="dialog" aria-modal="true">
         <n-spin :show="show">
           <n-form ref="formRef1" size="large" :show-label="false">
             <n-form-item>

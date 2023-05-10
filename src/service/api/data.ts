@@ -35,6 +35,10 @@ export function addOneColumn(data_name: string, column_name: string, default_val
   return request.post<ApiAuth.UserFlag>('/addOneColumn', { data_name, column_name, default_value });
 }
 
+export function qualityEvaluate(data_generate_name: string, data_ground_truth: string) {
+  return request.post<ApiAuth.UserFlag>('/qualityEvaluate', { data_generate_name, data_ground_truth });
+}
+
 export function deleteDataInfo(data_name: string) {
   return request.post<ApiAuth.UserFlag>('/deleteDataInfo', { data_name });
 }
