@@ -9,6 +9,9 @@
     </n-card>
     <n-modal v-model:show="showModal">
       <n-card style="width: 800px" title="数据集编辑" :bordered="false" size="huge" role="dialog" aria-modal="true">
+        <n-space>
+          <n-button @click="handleClickAddColumn">增加列</n-button>
+        </n-space>
         <n-space :vertical="true">
           <loading-empty-wrapper class="h-480px" :loading="loading" :empty="empty">
             <n-data-table :columns="columns_edit" :data="dataSource_edit" :flex-height="true" class="h-480px" />
@@ -28,6 +31,21 @@
         </n-form>
       </n-card>
     </n-modal>
+    <n-modal v-model:show="showModalAdd">
+      <n-card style="width: 600px" title="名称编辑" :bordered="false" size="huge" role="dialog" aria-modal="true">
+        <n-form ref="formRef1" size="large" :show-label="false">
+          <n-form-item>
+            <n-input v-model:value="valueAddInput" placeholder="请输入新增的列名" />
+          </n-form-item>
+          <n-form-item>
+            <n-input v-model:value="valueAddDefault" placeholder="请输入列的默认值" />
+          </n-form-item>
+          <n-form-item>
+            <n-button @click="handleAddColumn(valueAddInput, valueAddDefault)"> 确定 </n-button>
+          </n-form-item>
+        </n-form>
+      </n-card>
+    </n-modal>
   </div>
 </template>
 
@@ -37,9 +55,19 @@ import { NSpace, NButton, NPopconfirm } from 'naive-ui';
 import type { DataTableColumn } from 'naive-ui';
 import { useLoadingEmpty } from '@/hooks';
 import { localStg } from '@/utils';
-import { deleteOneColumn, deleteDataInfo, getColumnInfo, getDataInfo, editOneColumn } from '@/service/api/data';
+import {
+  deleteOneColumn,
+  deleteDataInfo,
+  getColumnInfo,
+  getDataInfo,
+  editOneColumn,
+  addOneColumn
+} from '@/service/api/data';
 
 const { loading, startLoading, endLoading, empty } = useLoadingEmpty();
+const valueAddInput = ref('');
+const valueAddDefault = ref('');
+const showModalAdd = ref(false);
 const showModal = ref(false);
 const showModalInside = ref(false);
 const valueEditInput = ref('');
@@ -133,6 +161,17 @@ async function handleDeleteTable(data_name: string) {
   await updateDataTable();
 }
 
+async function handleAddColumn(column_name: string, default_value: string) {
+  const { data } = await addOneColumn(dataname.value, column_name, default_value);
+  if (data?.username === localStg.get('userInfo')?.userName) {
+    window.$message?.success(`添加成功`);
+  } else {
+    window.$message?.error(`添加失败`);
+  }
+  await updateColumnTable();
+  await updateDataTable();
+  showModalAdd.value = false;
+}
 async function handleDeleteColumn(column_id: string) {
   const { data } = await deleteOneColumn(dataname.value, column_id);
   if (data?.username === localStg.get('userInfo')?.userName) {
@@ -143,7 +182,11 @@ async function handleDeleteColumn(column_id: string) {
   await updateColumnTable();
   await updateDataTable();
 }
-
+async function handleClickAddColumn() {
+  valueAddInput.value = '';
+	valueAddDefault.value = '';
+  showModalAdd.value = true;
+}
 async function handleEditColumn(column_id: string, new_data_name: string) {
   const { data } = await editOneColumn(dataname.value, column_id, new_data_name);
   if (data?.username === localStg.get('userInfo')?.userName) {

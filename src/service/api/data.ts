@@ -31,6 +31,10 @@ export function searchSomeData(data_type:string,data_value:string,data_name:stri
   return request.post<object>('/searchSomeData',{data_type,data_value,data_name});
 }
 
+export function addOneColumn(data_name: string, column_name: string, default_value: string) {
+  return request.post<ApiAuth.UserFlag>('/addOneColumn', { data_name, column_name, default_value });
+}
+
 export function deleteDataInfo(data_name: string) {
   return request.post<ApiAuth.UserFlag>('/deleteDataInfo', { data_name });
 }
