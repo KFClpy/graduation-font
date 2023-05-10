@@ -69,6 +69,7 @@ const { loading, startLoading, endLoading, empty } = useLoadingEmpty();
 
 let columns: DataTableColumn[] = [];
 const dataSource = ref([]);
+const allDataSource=ref([]);
 // 创建options，每个option都有label和value，value和option都是列表data_name_list中的值
 const options = ref([]);
 const value = ref(' 请选择数据 ');
@@ -81,7 +82,6 @@ const downloadAllow = ref(false);
 const cardTitle = ref('数据编辑');
 const buttonTitle = ref('修改');
 const searchType = ref('');
-const searchValue = ref('');
 async function updateDataName() {
   const { data } = await getDataName();
   // value.value=data?.data_name[0];
@@ -174,6 +174,7 @@ async function updateDataTable() {
       data_source[data_header[j]] = data_value[j][i];
     }
     dataSource.value.push(data_source);
+    allDataSource.value.push(data_source);
   }
   endLoading();
 }
@@ -219,7 +220,7 @@ function addData() {
   cardTitle.value = '数据添加';
   buttonTitle.value = '添加';
   const changeKeys = [];
-  Object.keys(dataSource.value[0]).forEach(item => {
+  Object.keys(allDataSource.value[0]).forEach(item => {
     if (item !== 'tid') {
       changeKeys.push(item);
     }
@@ -241,7 +242,7 @@ function searchData() {
   cardTitle.value = '数据查询';
   buttonTitle.value = '查询';
   const changeKeys = [];
-  Object.keys(dataSource.value[0]).forEach(item => {
+  Object.keys(allDataSource.value[0]).forEach(item => {
     if (item !== 'tid') {
       changeKeys.push(item);
     }
