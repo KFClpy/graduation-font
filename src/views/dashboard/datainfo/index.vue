@@ -33,17 +33,19 @@
     </n-modal>
     <n-modal v-model:show="showModalAdd">
       <n-card style="width: 600px" title="名称编辑" :bordered="false" size="huge" role="dialog" aria-modal="true">
-        <n-form ref="formRef1" size="large" :show-label="false">
-          <n-form-item>
-            <n-input v-model:value="valueAddInput" placeholder="请输入新增的列名" />
-          </n-form-item>
-          <n-form-item>
-            <n-input v-model:value="valueAddDefault" placeholder="请输入列的默认值" />
-          </n-form-item>
-          <n-form-item>
-            <n-button @click="handleAddColumn(valueAddInput, valueAddDefault)"> 确定 </n-button>
-          </n-form-item>
-        </n-form>
+        <n-spin :show="show">
+          <n-form ref="formRef1" size="large" :show-label="false">
+            <n-form-item>
+              <n-input v-model:value="valueAddInput" placeholder="请输入新增的列名" />
+            </n-form-item>
+            <n-form-item>
+              <n-input v-model:value="valueAddDefault" placeholder="请输入列的默认值" />
+            </n-form-item>
+            <n-form-item>
+              <n-button @click="handleAddColumn(valueAddInput, valueAddDefault)"> 确定 </n-button>
+            </n-form-item>
+          </n-form>
+        </n-spin>
       </n-card>
     </n-modal>
   </div>
@@ -71,6 +73,7 @@ const showModalAdd = ref(false);
 const showModal = ref(false);
 const showModalInside = ref(false);
 const valueEditInput = ref('');
+const show = ref(false);
 const columns: DataTableColumn[] = [
   {
     title: '数据集名称',
@@ -163,6 +166,7 @@ async function handleDeleteTable(data_name: string) {
 
 async function handleAddColumn(column_name: string, default_value: string) {
   const { data } = await addOneColumn(dataname.value, column_name, default_value);
+  show.value = true;
   if (data?.username === localStg.get('userInfo')?.userName) {
     window.$message?.success(`添加成功`);
   } else {
@@ -170,6 +174,7 @@ async function handleAddColumn(column_name: string, default_value: string) {
   }
   await updateColumnTable();
   await updateDataTable();
+  show.value = false;
   showModalAdd.value = false;
 }
 async function handleDeleteColumn(column_id: string) {
@@ -184,7 +189,7 @@ async function handleDeleteColumn(column_id: string) {
 }
 async function handleClickAddColumn() {
   valueAddInput.value = '';
-	valueAddDefault.value = '';
+  valueAddDefault.value = '';
   showModalAdd.value = true;
 }
 async function handleEditColumn(column_id: string, new_data_name: string) {
@@ -201,7 +206,6 @@ async function handleEditColumn(column_id: string, new_data_name: string) {
 async function handleEditColumnOpen(column_id: string) {
   showModalInside.value = true;
   valueEditInput.value = dataSource_edit.value?.find(item => item.column_id === Number(column_id)).column_name;
-  console.log(valueEditInput.value);
   columnId.value = column_id;
 }
 async function handleEditTable(data_name: string) {
