@@ -27,7 +27,7 @@ export function getDataInfo() {
   return request.post<object>('/getDataInfo');
 }
 
-export function searchSomeData(data_type:string,data_value:string,data_name:string){
+export function searchSomeData(data_type: string, data_value: string, data_name: string) {
   return request.post<object>('/searchSomeData',{data_type,data_value,data_name});
 }
 

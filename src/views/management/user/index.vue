@@ -3,17 +3,9 @@
     <n-card title="用户管理" :bordered="false" class="rounded-16px shadow-sm">
       <n-space class="pb-12px" justify="space-between">
         <n-space>
-          <n-button type="primary" @click="handleAddTable">
-            <icon-ic-round-plus class="mr-4px text-20px" />
-            新增
-          </n-button>
           <n-button type="error">
             <icon-ic-round-delete class="mr-4px text-20px" />
             删除
-          </n-button>
-          <n-button type="success">
-            <icon-uil:export class="mr-4px text-20px" />
-            导出Excel
           </n-button>
         </n-space>
         <n-space align="center" :size="18">
@@ -36,8 +28,9 @@ import type { Ref } from 'vue';
 import { NButton, NPopconfirm, NSpace, NTag } from 'naive-ui';
 import type { DataTableColumns, PaginationProps } from 'naive-ui';
 import { genderLabels, userStatusLabels } from '@/constants';
-import { fetchUserList } from '@/service';
+import { deleteUser, fetchUserList } from '@/service';
 import { useBoolean, useLoading } from '@/hooks';
+import { localStg } from '@/utils';
 import TableActionModal from './components/table-action-modal.vue';
 import type { ModalType } from './components/table-action-modal.vue';
 import ColumnSetting from './components/column-setting.vue';
@@ -46,22 +39,20 @@ const { loading, startLoading, endLoading } = useLoading(false);
 const { bool: visible, setTrue: openModal } = useBoolean();
 
 const tableData = ref<UserManagement.User[]>([]);
-function setTableData(data: UserManagement.User[]) {
-  tableData.value = data;
+function setTableData(data) {
+  tableData.value = data.userList;
 }
 
 async function getTableData() {
   startLoading();
   const { data } = await fetchUserList();
   if (data) {
-    setTimeout(() => {
-      setTableData(data);
-      endLoading();
-    }, 1000);
+    setTableData(data);
+    endLoading();
   }
 }
 
-const columns: Ref<DataTableColumns<UserManagement.User>> = ref([
+const columns = ref([
   {
     type: 'selection',
     align: 'center'
@@ -74,11 +65,6 @@ const columns: Ref<DataTableColumns<UserManagement.User>> = ref([
   {
     key: 'userName',
     title: '用户名',
-    align: 'center'
-  },
-  {
-    key: 'age',
-    title: '用户年龄',
     align: 'center'
   },
   {
@@ -109,24 +95,6 @@ const columns: Ref<DataTableColumns<UserManagement.User>> = ref([
     align: 'center'
   },
   {
-    key: 'userStatus',
-    title: '状态',
-    align: 'center',
-    render: row => {
-      if (row.userStatus) {
-        const tagTypes: Record<UserManagement.UserStatusKey, NaiveUI.ThemeColor> = {
-          '1': 'success',
-          '2': 'error',
-          '3': 'warning',
-          '4': 'default'
-        };
-
-        return <NTag type={tagTypes[row.userStatus]}>{userStatusLabels[row.userStatus]}</NTag>;
-      }
-      return <span></span>;
-    }
-  },
-  {
     key: 'actions',
     title: '操作',
     align: 'center',
@@ -136,7 +104,7 @@ const columns: Ref<DataTableColumns<UserManagement.User>> = ref([
           <NButton size={'small'} onClick={() => handleEditTable(row.id)}>
             编辑
           </NButton>
-          <NPopconfirm onPositiveClick={() => handleDeleteTable(row.id)}>
+          <NPopconfirm onPositiveClick={() => handleDeleteTable(row.userName)}>
             {{
               default: () => '确认删除',
               trigger: () => <NButton size={'small'}>删除</NButton>
@@ -146,7 +114,7 @@ const columns: Ref<DataTableColumns<UserManagement.User>> = ref([
       );
     }
   }
-]) as Ref<DataTableColumns<UserManagement.User>>;
+]);
 
 const modalType = ref<ModalType>('add');
 
@@ -160,11 +128,6 @@ function setEditData(data: UserManagement.User | null) {
   editData.value = data;
 }
 
-function handleAddTable() {
-  openModal();
-  setModalType('add');
-}
-
 function handleEditTable(rowId: string) {
   const findItem = tableData.value.find(item => item.id === rowId);
   if (findItem) {
@@ -174,8 +137,14 @@ function handleEditTable(rowId: string) {
   openModal();
 }
 
-function handleDeleteTable(rowId: string) {
-  window.$message?.info(`点击了删除，rowId为${rowId}`);
+async function handleDeleteTable(rowName: string) {
+  const { data } = await deleteUser(rowName);
+  if (data?.username === localStg.get('userInfo')?.userName) {
+    window.$message?.success(`删除成功`);
+  } else {
+    window.$message?.error(`删除失败`);
+  }
+  await getTableData();
 }
 
 const pagination: PaginationProps = reactive({

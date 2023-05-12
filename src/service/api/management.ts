@@ -1,9 +1,10 @@
-import { adapter } from '@/utils';
-import { mockRequest } from '../request';
-import { adapterOfFetchUserList } from './management.adapter';
+import { request } from '../request';
 
 /** 获取用户列表 */
-export const fetchUserList = async () => {
-  const data = await mockRequest.post<ApiUserManagement.User[] | null>('/getAllUserList');
-  return adapter(adapterOfFetchUserList, data);
-};
+export function fetchUserList() {
+  return request.post<object>('/getUserList');
+}
+
+export function deleteUser(user_name: string) {
+  return request.post<ApiAuth.UserFlag>('/deleteUser', { user_name });
+}
