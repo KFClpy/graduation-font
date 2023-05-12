@@ -24,6 +24,12 @@ export const genderLabels: Record<UserManagement.GenderKey, string> = {
   1: '男'
 };
 
+export const roleLabels: Record<Auth.RoleType, string> = {
+  super: '超级管理员',
+  admin: '管理员',
+  user: '普通用户'
+};
+
 export const genderOptions: Common.OptionWithKey<UserManagement.GenderKey>[] = [
   { value: '0', label: genderLabels['0'] },
   { value: '1', label: genderLabels['1'] }

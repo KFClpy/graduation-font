@@ -27,7 +27,7 @@ import { reactive, ref } from 'vue';
 import type { Ref } from 'vue';
 import { NButton, NPopconfirm, NSpace, NTag } from 'naive-ui';
 import type { DataTableColumns, PaginationProps } from 'naive-ui';
-import { genderLabels, userStatusLabels } from '@/constants';
+import { genderLabels, roleLabels } from '@/constants';
 import { deleteUser, fetchUserList } from '@/service';
 import { useBoolean, useLoading } from '@/hooks';
 import { localStg } from '@/utils';
@@ -79,6 +79,24 @@ const columns = ref([
         };
 
         return <NTag type={tagTypes[row.gender]}>{genderLabels[row.gender]}</NTag>;
+      }
+
+      return <span></span>;
+    }
+  },
+  {
+    key: 'role',
+    title: '角色',
+    align: 'center',
+    render: row => {
+      if (row.role) {
+        const tagTypes: Record<UserManagement.RoleKey, NaiveUI.ThemeColor> = {
+          super: 'success',
+          admin: 'error',
+          user: 'warning'
+        };
+
+        return <NTag type={tagTypes[row.role]}>{roleLabels[row.role]}</NTag>;
       }
 
       return <span></span>;

@@ -20,6 +20,8 @@ declare namespace Auth {
 }
 
 declare namespace UserManagement {
+  import RoleType = Auth.RoleType;
+
   interface User extends ApiUserManagement.User {
     /** 序号 */
     index: number;
@@ -34,6 +36,7 @@ declare namespace UserManagement {
    */
   type GenderKey = NonNullable<User['gender']>;
 
+  type RoleKey = NonNullable<RoleType>;
   /**
    * 用户状态
    * - 1: 启用
