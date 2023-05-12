@@ -190,6 +190,7 @@ async function handleClick() {
   const { data } = await editUser(selectRowName.value, model);
   if (data?.username === localStg.get('userInfo')?.userName) {
     window.$message?.success(`编辑成功`);
+		showModal.value=false;
   } else {
     window.$message?.error(`编辑失败`);
   }
@@ -200,7 +201,6 @@ async function handleDeleteTable(rowName: string) {
   const { data } = await deleteUser(rowName);
   if (data?.username === localStg.get('userInfo')?.userName) {
     window.$message?.success(`删除成功`);
-		showModal.value=false;
   } else {
     window.$message?.error(`删除失败`);
   }
