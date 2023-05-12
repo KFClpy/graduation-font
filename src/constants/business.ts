@@ -20,8 +20,8 @@ export const userRoleOptions: Common.OptionWithKey<Auth.RoleType>[] = [
 
 /** 用户性别 */
 export const genderLabels: Record<UserManagement.GenderKey, string> = {
-  0: '女',
-  1: '男'
+  0: '男',
+  1: '女'
 };
 
 export const roleLabels: Record<Auth.RoleType, string> = {

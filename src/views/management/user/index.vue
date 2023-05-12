@@ -17,8 +17,25 @@
         </n-space>
       </n-space>
       <n-data-table :columns="columns" :data="tableData" :loading="loading" :pagination="pagination" />
-      <table-action-modal v-model:visible="visible" :type="modalType" :edit-data="editData" />
     </n-card>
+    <n-modal v-model:show="showModal">
+      <n-card style="width: 600px" title="编辑" :bordered="false" size="huge" role="dialog" aria-modal="true">
+        <n-form ref="formRef" :model="model" :rules="rules" size="large" :show-label="false">
+          <n-form-item path="gender">
+            <n-select v-model:value="model.gender" :options="options" :consistent-menu-width="false" />
+          </n-form-item>
+          <n-form-item path="phone">
+            <n-input v-model:value="model.phone" placeholder="请输入手机号码" />
+          </n-form-item>
+          <n-form-item path="email">
+            <n-input v-model:value="model.email" placeholder="请输入电子邮箱" />
+          </n-form-item>
+          <n-form-item path="button">
+            <n-button type="primary" @click="handleClick">确定</n-button>
+          </n-form-item>
+        </n-form>
+      </n-card>
+    </n-modal>
   </div>
 </template>
 
@@ -26,11 +43,11 @@
 import { reactive, ref } from 'vue';
 import type { Ref } from 'vue';
 import { NButton, NPopconfirm, NSpace, NTag } from 'naive-ui';
-import type { DataTableColumns, PaginationProps } from 'naive-ui';
+import type { DataTableColumns, PaginationProps, FormRules, FormInst } from 'naive-ui';
 import { genderLabels, roleLabels } from '@/constants';
-import { deleteUser, fetchUserList } from '@/service';
+import { deleteUser, editUser, fetchUserList } from '@/service';
 import { useBoolean, useLoading } from '@/hooks';
-import { localStg } from '@/utils';
+import { formRules, localStg } from '@/utils';
 import TableActionModal from './components/table-action-modal.vue';
 import type { ModalType } from './components/table-action-modal.vue';
 import ColumnSetting from './components/column-setting.vue';
@@ -38,7 +55,19 @@ import ColumnSetting from './components/column-setting.vue';
 const { loading, startLoading, endLoading } = useLoading(false);
 const { bool: visible, setTrue: openModal } = useBoolean();
 
-const tableData = ref<UserManagement.User[]>([]);
+const tableData = ref([]);
+const showModal = ref(false);
+const selectRowName = ref('');
+const formRef = ref<HTMLElement & FormInst>();
+const model = reactive({
+  phone: '',
+  email: '',
+  gender: 0
+});
+const rules: FormRules = {
+  phone: formRules.phone,
+  email: formRules.email
+};
 function setTableData(data) {
   tableData.value = data.userList;
 }
@@ -77,7 +106,6 @@ const columns = ref([
           '0': 'success',
           '1': 'warning'
         };
-
         return <NTag type={tagTypes[row.gender]}>{genderLabels[row.gender]}</NTag>;
       }
 
@@ -119,7 +147,7 @@ const columns = ref([
     render: row => {
       return (
         <NSpace justify={'center'}>
-          <NButton size={'small'} onClick={() => handleEditTable(row.id)}>
+          <NButton size={'small'} onClick={() => handleEditTable(row.userName)}>
             编辑
           </NButton>
           <NPopconfirm onPositiveClick={() => handleDeleteTable(row.userName)}>
@@ -133,32 +161,46 @@ const columns = ref([
     }
   }
 ]);
-
-const modalType = ref<ModalType>('add');
-
-function setModalType(type: ModalType) {
-  modalType.value = type;
-}
-
-const editData = ref<UserManagement.User | null>(null);
-
-function setEditData(data: UserManagement.User | null) {
-  editData.value = data;
-}
-
-function handleEditTable(rowId: string) {
-  const findItem = tableData.value.find(item => item.id === rowId);
-  if (findItem) {
-    setEditData(findItem);
+const options = ref([
+  {
+    label: '男',
+    value: 0
+  },
+  {
+    label: '女',
+    value: 1
   }
-  setModalType('edit');
-  openModal();
+]);
+
+async function handleEditTable(rowName: string) {
+  selectRowName.value = rowName;
+  showModal.value = true;
+  const findItem = tableData.value.find(item => item.userName === rowName);
+  const array = {
+    '0': '男',
+    '1': '女'
+  };
+  model.gender = array[findItem.gender];
+  model.phone = findItem.phone;
+  model.email = findItem.email;
+}
+
+async function handleClick() {
+  await formRef.value?.validate();
+  const { data } = await editUser(selectRowName.value, model);
+  if (data?.username === localStg.get('userInfo')?.userName) {
+    window.$message?.success(`编辑成功`);
+  } else {
+    window.$message?.error(`编辑失败`);
+  }
+  await getTableData();
 }
 
 async function handleDeleteTable(rowName: string) {
   const { data } = await deleteUser(rowName);
   if (data?.username === localStg.get('userInfo')?.userName) {
     window.$message?.success(`删除成功`);
+		showModal.value=false;
   } else {
     window.$message?.error(`删除失败`);
   }
