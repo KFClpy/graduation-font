@@ -3,10 +3,20 @@
     <n-card title="用户管理" :bordered="false" class="rounded-16px shadow-sm">
       <n-space class="pb-12px" justify="space-between">
         <n-space>
-          <n-button type="error">
-            <icon-ic-round-delete class="mr-4px text-20px" />
-            删除
-          </n-button>
+          <n-space>
+            <n-button type="error" @click="handleDelete">
+              <icon-ic-round-delete class="mr-4px text-20px" />
+              删除
+            </n-button>
+          </n-space>
+          <n-space>
+            <n-button :disabled="!enabled" @click="searchUser">
+              <icon-uil-search class="text-20px" />
+            </n-button>
+          </n-space>
+          <n-space>
+            <n-input v-model:value="searchValue" placeholder="请输入用户名" @input="handleInput"></n-input>
+          </n-space>
         </n-space>
         <n-space align="center" :size="18">
           <n-button size="small" type="primary" @click="getTableData">
@@ -16,7 +26,14 @@
           <column-setting v-model:columns="columns" />
         </n-space>
       </n-space>
-      <n-data-table :columns="columns" :data="tableData" :loading="loading" :pagination="pagination" />
+      <n-data-table
+        :row-key="rowKey"
+        :columns="columns"
+        :data="tableData"
+        :loading="loading"
+        :pagination="pagination"
+        @update:checked-row-keys="handleCheck"
+      />
     </n-card>
     <n-modal v-model:show="showModal">
       <n-card style="width: 600px" title="编辑" :bordered="false" size="huge" role="dialog" aria-modal="true">
@@ -45,7 +62,7 @@ import type { Ref } from 'vue';
 import { NButton, NPopconfirm, NSpace, NTag } from 'naive-ui';
 import type { DataTableColumns, PaginationProps, FormRules, FormInst } from 'naive-ui';
 import { genderLabels, roleLabels } from '@/constants';
-import { deleteUser, editUser, fetchUserList } from '@/service';
+import { deleteUser, deleteUsers, editUser, fetchUser, fetchUserList } from '@/service';
 import { useBoolean, useLoading } from '@/hooks';
 import { formRules, localStg } from '@/utils';
 import TableActionModal from './components/table-action-modal.vue';
@@ -54,15 +71,18 @@ import ColumnSetting from './components/column-setting.vue';
 
 const { loading, startLoading, endLoading } = useLoading(false);
 const { bool: visible, setTrue: openModal } = useBoolean();
-
+const searchValue = ref('');
 const tableData = ref([]);
 const showModal = ref(false);
 const selectRowName = ref('');
 const formRef = ref<HTMLElement & FormInst>();
+const checkedRowKeysRef = ref([]);
+const enabled = ref(false);
+const rowKey = row => row.userName;
 const model = reactive({
   phone: '',
   email: '',
-  gender: 0
+  gender: ''
 });
 const rules: FormRules = {
   phone: formRules.phone,
@@ -70,6 +90,9 @@ const rules: FormRules = {
 };
 function setTableData(data) {
   tableData.value = data.userList;
+}
+function handleInput() {
+  enabled.value = searchValue.value.length > 0;
 }
 
 async function getTableData() {
@@ -80,7 +103,14 @@ async function getTableData() {
     endLoading();
   }
 }
-
+async function searchUser() {
+	startLoading();
+  const { data } = await fetchUser(searchValue.value);
+  if (data) {
+    await setTableData(data);
+		endLoading();
+  }
+}
 const columns = ref([
   {
     type: 'selection',
@@ -171,7 +201,15 @@ const options = ref([
     value: 1
   }
 ]);
-
+async function handleDelete() {
+  const { data } = await deleteUsers(checkedRowKeysRef.value);
+  if (data?.username === localStg.get('userInfo')?.userName) {
+    window.$message?.success(`删除成功`);
+  } else {
+    window.$message?.error(`删除失败`);
+  }
+  await getTableData();
+}
 async function handleEditTable(rowName: string) {
   selectRowName.value = rowName;
   showModal.value = true;
@@ -187,10 +225,16 @@ async function handleEditTable(rowName: string) {
 
 async function handleClick() {
   await formRef.value?.validate();
+  if (model.gender === '男') {
+    model.gender = '0';
+  }
+  if (model.gender === '女') {
+    model.gender = '1';
+  }
   const { data } = await editUser(selectRowName.value, model);
   if (data?.username === localStg.get('userInfo')?.userName) {
     window.$message?.success(`编辑成功`);
-		showModal.value=false;
+    showModal.value = false;
   } else {
     window.$message?.error(`编辑失败`);
   }
@@ -220,6 +264,10 @@ const pagination: PaginationProps = reactive({
     pagination.page = 1;
   }
 });
+
+function handleCheck(rowKeys: string[]) {
+  checkedRowKeysRef.value = rowKeys;
+}
 
 function init() {
   getTableData();
