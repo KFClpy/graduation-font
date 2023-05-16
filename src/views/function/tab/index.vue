@@ -25,7 +25,7 @@ const tabStore = useTabStore();
 const title = ref('');
 
 function handleToTabDetail() {
-  routerPush({ name: routeName('function_tab-detail'), query: { name: 'abc' }, hash: '#DEMO_HASH' });
+  routerPush({ name: routeName('userinfo'), query: { name: 'abc' }, hash: '#DEMO_HASH' });
 }
 
 function handleToTabMultiDetail(num: number) {

@@ -10,7 +10,8 @@
 <script lang="ts" setup>
 import type { DropdownOption } from 'naive-ui';
 import { useAuthStore, useThemeStore } from '@/store';
-import { useIconRender } from '@/composables';
+import { useIconRender, useRouterPush } from '@/composables';
+import { routeName } from '@/router';
 
 defineOptions({ name: 'UserAvatar' });
 
@@ -36,7 +37,7 @@ const options: DropdownOption[] = [
 ];
 
 type DropdownKey = 'user-center' | 'logout';
-
+const { routerPush } = useRouterPush();
 function handleDropdown(optionKey: string) {
   const key = optionKey as DropdownKey;
   if (key === 'logout') {
@@ -49,6 +50,8 @@ function handleDropdown(optionKey: string) {
         auth.resetAuthStore();
       }
     });
+  } else if (key === 'user-center') {
+    routerPush({ name: routeName('userinfo'), query: { name: 'abc' }, hash: '#DEMO_HASH' });
   }
 }
 </script>

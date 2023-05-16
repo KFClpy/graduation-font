@@ -20,3 +20,11 @@ export function editUser(user_name: string, model: object) {
 export function fetchUser(user_name: string) {
   return request.post<object>('/searchUser', { user_name });
 }
+
+export function fetchSelf() {
+  return request.post<object>('/getSelfInfo');
+}
+
+export function changeUserInfo(userInfo: object) {
+  return request.post<ApiAuth.UserFlag>('/changeUserInfo', { userInfo });
+}

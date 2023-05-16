@@ -76,7 +76,8 @@ declare namespace PageRoute {
     | 'plugin_map'
     | 'plugin_print'
     | 'plugin_swiper'
-    | 'plugin_video';
+    | 'plugin_video'
+    | 'userinfo';
 
   /**
    * last degree route key, which has the page file
@@ -131,5 +132,6 @@ declare namespace PageRoute {
     | 'plugin_print'
     | 'plugin_swiper'
     | 'plugin_video'
+    | 'userinfo'
   >;
 }
