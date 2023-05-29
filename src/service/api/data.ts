@@ -28,7 +28,7 @@ export function getDataInfo() {
 }
 
 export function searchSomeData(data_type: string, data_value: string, data_name: string) {
-  return request.post<object>('/searchSomeData',{data_type,data_value,data_name});
+  return request.post<object>('/searchSomeData', { data_type, data_value, data_name });
 }
 
 export function addOneColumn(data_name: string, column_name: string, default_value: string) {
@@ -68,4 +68,16 @@ export function manualFuzzyJoin(
     data_name_generate,
     config
   });
+}
+
+export function checkValid(model: object) {
+  return request.post('/checkValid', model);
+}
+
+export function executeSql(model: object) {
+  return request.post('/executeSql', model);
+}
+
+export function changePassword(newpassword: string, oldpassword: string) {
+  return request.post('/changePassword', { newpassword, oldpassword });
 }
