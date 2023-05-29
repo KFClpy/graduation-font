@@ -17,13 +17,13 @@
       </n-form>
       <n-form ref="formRef1" :model="model1" :rules="rules1" size="large" :show-label="false">
         <n-form-item path="oldPwd">
-          <n-input v-model:value="model1.oldPwd" placeholder="请输入旧密码" />
+          <n-input v-model:value="model1.oldPwd" type="password" placeholder="请输入旧密码" />
         </n-form-item>
         <n-form-item path="pwd">
-          <n-input v-model:value="model1.pwd" placeholder="请输入密码" />
+          <n-input v-model:value="model1.pwd" type="password" placeholder="请输入密码" />
         </n-form-item>
         <n-form-item path="confirmPwd">
-          <n-input v-model:value="model1.confirmPwd" placeholder="请再次输入密码" />
+          <n-input v-model:value="model1.confirmPwd" type="password" placeholder="请再次输入密码" />
         </n-form-item>
         <n-form-item path="button">
           <n-button type="primary" @click="handleClick1">确定</n-button>
