@@ -161,6 +161,7 @@ async function updateDataTable() {
     }
   });
   dataSource.value = [];
+	allDataSource.value=[];
   // data_value是一个类，内容是二维数组，他的行号是data_header的下标，列号是每个data_header的值，把每一行的值赋给data_source
   let rowlen = 0;
   for (let i = 0; i < data_value.length; i++) {
